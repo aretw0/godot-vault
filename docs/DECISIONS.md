@@ -290,6 +290,64 @@ docs/knowledge/
 
 ---
 
+### ADR-008: CI/CD com GDScript Toolkit
+
+**Data**: 2026-02-15
+**Status**: Aceita
+
+**Contexto**:
+Necessidade de garantir qualidade de código através de linting e testes automatizados. Projeto precisa de feedback rápido sobre problemas de código tanto localmente quanto no CI.
+
+**Decisão**:
+Implementar CI/CD mínimo usando GitHub Actions com GDScript Toolkit (gdlint) para linting.
+
+**Ferramentas Escolhidas**:
+1. **gdlint** (gdtoolkit 4.3.1): Linter oficial para GDScript
+2. **gdformat**: Formatador automático de código
+3. **GUT** (futuro): Framework de testes unitários para Godot
+
+**Implementação**:
+```bash
+# Workflow GitHub Actions
+.github/workflows/ci.yml
+  - Lint GDScript files
+  - Run tests (quando implementados)
+  - Validate project structure
+
+# Scripts locais
+scripts/lint.sh      # Executar lint
+scripts/format.sh    # Auto-formatar
+scripts/test.sh      # Executar testes
+```
+
+**Razões**:
+1. **gdtoolkit**: Ferramenta oficial e bem mantida para GDScript
+2. **Compatibilidade**: Versão 4.3.1 alinhada com Godot 4.3
+3. **Automação**: Scripts locais + GitHub Actions
+4. **Qualidade**: Detecta problemas antes do merge
+5. **Velocidade**: Feedback rápido (lint ~10s)
+
+**Consequências**:
+- ✅ Qualidade de código garantida
+- ✅ PRs automaticamente validados
+- ✅ Desenvolvimento local com feedback imediato
+- ✅ Formatação consistente em todo código
+- ⚠️ Necessita Python instalado localmente
+- ⚠️ Adiciona etapa no workflow (mas rápida)
+
+**Boas Práticas Estabelecidas**:
+- Executar `./scripts/lint.sh` antes de commit
+- Usar `./scripts/format.sh` para auto-correção
+- CI bloqueia merge se lint falhar
+- Todos arquivos `.gd` devem passar no lint
+
+**Alternativas Consideradas**:
+- **Sem CI**: Rejeitado, qualidade inconsistente
+- **Apenas testes manuais**: Não escala
+- **Outras ferramentas de lint**: gdtoolkit é padrão da comunidade
+
+---
+
 ## Templates para Novas Decisões
 
 ### Template: Nova Decisão
@@ -341,6 +399,7 @@ docs/knowledge/
 | 005 | Organização de Diretórios por Categoria | Aceita | 2026-02-15 |
 | 006 | Documentation-First Approach | Aceita | 2026-02-15 |
 | 007 | Estrutura de Gestão de Conhecimento | Aceita | 2026-02-15 |
+| 008 | CI/CD com GDScript Toolkit | Aceita | 2026-02-15 |
 
 ---
 
