@@ -348,6 +348,68 @@ scripts/test.sh      # Executar testes
 
 ---
 
+### ADR-009: Cache do Godot Binary no CI
+
+**Data**: 2026-02-15
+**Status**: Aceita
+
+**Contexto**:
+O workflow de CI estava baixando o binário do Godot (107 MB) em cada execução, resultando em:
+- Tempo de setup longo (~30 segundos)
+- Uso desnecessário de bandwidth
+- Dependência de serviços externos (GitHub releases)
+- Maior consumo de recursos
+
+**Decisão**:
+Implementar cache do binário do Godot usando GitHub Actions Cache (`actions/cache@v4`).
+
+**Implementação**:
+```yaml
+- name: Cache Godot binary
+  id: cache-godot
+  uses: actions/cache@v4
+  with:
+    path: Godot_v4.3-stable_linux.x86_64
+    key: godot-4.3-stable-linux-x86_64
+    restore-keys: godot-4.3-stable-
+```
+
+**Razões**:
+1. **Performance**: Reduz tempo de setup de ~30s para ~5s
+2. **Eficiência**: Evita download repetido do mesmo binário
+3. **Confiabilidade**: Menos dependência de disponibilidade de releases.github.com
+4. **Custo**: Reduz uso de bandwidth e minutos de Actions
+5. **Sustentabilidade**: Menor consumo de recursos e energia
+
+**Consequências**:
+- ✅ CI mais rápido e eficiente
+- ✅ Menor latência em execuções subsequentes
+- ✅ Melhor experiência do desenvolvedor
+- ✅ Uso de recurso nativo do GitHub Actions
+- ⚠️ Cache expira após 7 dias sem uso
+- ⚠️ Primeira execução após invalidação ainda é lenta
+- ⚠️ Cache ocupa espaço (limite de 10GB por repositório)
+
+**Detalhes Técnicos**:
+- **Cache Key**: `godot-4.3-stable-linux-x86_64` (específica para versão)
+- **Tamanho**: ~107 MB (binário comprimido no cache)
+- **Validade**: 7 dias de inatividade ou até mudança de versão
+- **Fallback**: Download automático em cache miss
+
+**Boas Práticas Estabelecidas**:
+- Usar chave de cache específica por versão
+- Incluir plataforma na chave (linux-x86_64)
+- Usar `cp` ao invés de `mv` para preservar arquivo em cache
+- Limpar arquivo zip após extração para economizar espaço
+
+**Alternativas Consideradas**:
+- **Sem cache**: Descartado, muito ineficiente
+- **Cache do zip**: Considerado mas cache do binário é mais direto
+- **Docker image**: Mais complexo, overhead de container desnecessário
+- **Self-hosted runner**: Custo alto, complexidade de manutenção
+
+---
+
 ## Templates para Novas Decisões
 
 ### Template: Nova Decisão
@@ -400,6 +462,7 @@ scripts/test.sh      # Executar testes
 | 006 | Documentation-First Approach | Aceita | 2026-02-15 |
 | 007 | Estrutura de Gestão de Conhecimento | Aceita | 2026-02-15 |
 | 008 | CI/CD com GDScript Toolkit | Aceita | 2026-02-15 |
+| 009 | Cache do Godot Binary no CI | Aceita | 2026-02-15 |
 
 ---
 
