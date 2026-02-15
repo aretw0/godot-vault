@@ -129,7 +129,7 @@ Esta base de conhecimento deve ser:
 - **Viva**: Atualizada conforme aprendemos
 - **Referenciável**: Linkada de DECISIONS.md e código
 - **Prática**: Com exemplos reais do projeto
-- **Completa**: Covering tanto teoria quanto prática
+- **Completa**: Cobrindo tanto teoria quanto prática
 
 ## Links Úteis
 
