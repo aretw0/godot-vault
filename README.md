@@ -105,6 +105,9 @@ Para informações mais detalhadas:
 - [Arquitetura](docs/ARCHITECTURE.md) - Visão geral da arquitetura
 - [Guia de Estilo](docs/STYLE_GUIDE.md) - Convenções de código
 - [Contribuindo](docs/CONTRIBUTING.md) - Como contribuir
+- [Planejamento](docs/PLANNING.md) - Roadmap e fases do projeto
+- [Decisões](docs/DECISIONS.md) - Decisões arquiteturais (ADRs)
+- [Base de Conhecimento](docs/knowledge/README.md) - Pesquisas e aprendizados
 
 ## 🛠️ Requisitos
 
