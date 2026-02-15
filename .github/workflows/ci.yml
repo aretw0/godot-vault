@@ -44,13 +44,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache Godot binary
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: |
+            Godot_v4.3-stable_linux.x86_64
+          key: godot-4.3-stable-linux-x86_64
+          restore-keys: |
+            godot-4.3-stable-
+
       - name: Download Godot
+        if: steps.cache-godot.outputs.cache-hit != 'true'
         run: |
           wget -q https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
           unzip -q Godot_v4.3-stable_linux.x86_64.zip
+          rm Godot_v4.3-stable_linux.x86_64.zip
+
+      - name: Install Godot
+        run: |
           chmod +x Godot_v4.3-stable_linux.x86_64
           sudo mkdir -p /usr/local/bin
-          sudo mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          sudo cp Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
 
       - name: Verify Godot installation
         run: |

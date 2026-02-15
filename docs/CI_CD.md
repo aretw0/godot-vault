@@ -37,7 +37,9 @@ Executado automaticamente em:
    - Falha se encontrar erros de linting
 
 2. **Run Tests** 🧪
-   - Baixa Godot 4.3 headless
+   - **Cache do Godot**: Utiliza GitHub Actions cache para evitar download repetido
+   - Baixa Godot 4.3 headless (apenas se não estiver em cache)
+   - Instala o binário em `/usr/local/bin/godot`
    - Importa o projeto
    - Executa testes com GUT (se existirem)
    - Atualmente pula testes se pasta `test/` não existir
@@ -46,6 +48,60 @@ Executado automaticamente em:
    - Verifica existência de `project.godot`
    - Valida estrutura de diretórios
    - Verifica `.gitignore`
+
+## Cache de Dependências
+
+### Cache do Godot Binary
+
+O workflow utiliza **GitHub Actions Cache** (`actions/cache@v4`) para armazenar o binário do Godot entre execuções, evitando downloads repetidos e acelerando o CI.
+
+**Configuração do Cache:**
+
+```yaml
+- name: Cache Godot binary
+  id: cache-godot
+  uses: actions/cache@v4
+  with:
+    path: |
+      Godot_v4.3-stable_linux.x86_64
+    key: godot-4.3-stable-linux-x86_64
+    restore-keys: |
+      godot-4.3-stable-
+```
+
+**Como Funciona:**
+
+1. **Primeira Execução** (cache miss):
+   - O Godot não está em cache
+   - Download do binário (~107 MB)
+   - Extração do zip
+   - Armazenamento em cache para próximas execuções
+
+2. **Execuções Subsequentes** (cache hit):
+   - Godot restaurado do cache (~3-5 segundos)
+   - Skip do download
+   - Instalação direta em `/usr/local/bin/godot`
+
+**Benefícios:**
+
+- ✅ **Velocidade**: Reduz tempo de setup de ~30s para ~5s
+- ✅ **Economia**: Menos uso de bandwidth do GitHub
+- ✅ **Confiabilidade**: Menos dependência de serviços externos
+- ✅ **Sustentabilidade**: Menor consumo de recursos
+
+**Cache Key:**
+
+O cache usa a chave `godot-4.3-stable-linux-x86_64`, que:
+- Identifica a versão específica do Godot
+- Garante que atualizações de versão invalidam o cache
+- Permite múltiplas versões em cache simultaneamente
+
+**Invalidação do Cache:**
+
+O cache será invalidado quando:
+- A chave mudar (ex: upgrade para Godot 4.4)
+- Após 7 dias sem uso (política do GitHub Actions)
+- Manualmente via GitHub UI (Settings → Actions → Caches)
 
 ## Scripts Locais
 
