@@ -27,7 +27,7 @@ jobs:
       - name: Lint GDScript files
         run: |
           echo "Running gdlint on all .gd files..."
-          find . -name "*.gd" -type f | while read file; do
+          find . -name "*.gd" -type f -not -path "./.godot/*" -not -path "./addons/*" | while read file; do
             echo "Linting: $file"
             gdlint "$file" || exit 1
           done
