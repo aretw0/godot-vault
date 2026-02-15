@@ -1,0 +1,26 @@
+# Godot-specific
+*.godot linguist-generated=true
+*.tscn linguist-language=Godot
+*.tres linguist-language=Godot
+
+# Normalize line endings
+* text=auto eol=lf
+
+# Godot scene and resource files
+*.tscn text
+*.tres text
+*.gd text
+*.gdshader text
+
+# Binary files
+*.translation binary
+*.import binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.svg binary
+*.ico binary
+*.wav binary
+*.ogg binary
+*.mp3 binary
