@@ -108,6 +108,7 @@ Para informações mais detalhadas:
 - [Planejamento](docs/PLANNING.md) - Roadmap e fases do projeto
 - [Decisões](docs/DECISIONS.md) - Decisões arquiteturais (ADRs)
 - [Base de Conhecimento](docs/knowledge/README.md) - Pesquisas e aprendizados
+- [CI/CD](docs/CI_CD.md) - Integração contínua e testes
 
 ## 🛠️ Requisitos
 
