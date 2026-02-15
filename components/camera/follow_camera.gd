@@ -1,5 +1,5 @@
-extends Camera2D
 class_name FollowCamera
+extends Camera2D
 ## Smooth camera that follows a target
 ##
 ## Attach to a scene and set the target to the node you want to follow.
@@ -23,29 +23,26 @@ class_name FollowCamera
 var _shake_amount: float = 0.0
 var _shake_offset: Vector2 = Vector2.ZERO
 
+
 func _ready() -> void:
 	if auto_find_player and target == null:
 		target = get_tree().get_first_node_in_group("player")
-	
+
 	if use_limits:
 		limit_left = int(limit_rect.position.x)
 		limit_top = int(limit_rect.position.y)
 		limit_right = int(limit_rect.position.x + limit_rect.size.x)
 		limit_bottom = int(limit_rect.position.y + limit_rect.size.y)
 
+
 func _process(delta: float) -> void:
 	if target == null:
 		return
-	
+
 	# Follow target
 	var target_pos = target.global_position + offset_from_target
-	global_position = GameUtils.smooth_lerp_vec2(
-		global_position,
-		target_pos,
-		follow_speed,
-		delta
-	)
-	
+	global_position = GameUtils.smooth_lerp_vec2(global_position, target_pos, follow_speed, delta)
+
 	# Apply shake
 	if _shake_amount > 0:
 		_shake_amount = max(0, _shake_amount - shake_decay * delta)
@@ -54,9 +51,11 @@ func _process(delta: float) -> void:
 	else:
 		offset = Vector2.ZERO
 
+
 ## Triggers a camera shake effect
 func shake(amount: float) -> void:
 	_shake_amount = amount
+
 
 ## Sets a new target to follow
 func set_target(new_target: Node2D) -> void:

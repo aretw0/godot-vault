@@ -3,10 +3,11 @@ extends Node2D
 
 @onready var info_label: RichTextLabel = $CanvasLayer/UI/MarginContainer/VBoxContainer/InfoLabel
 
+
 func _ready() -> void:
 	# Register for EventBus events
 	EventBus.on("test_event", _on_test_event)
-	
+
 	print("Godot Vault initialized successfully!")
 	print("Core systems loaded:")
 	print("  - EventBus")
@@ -14,10 +15,12 @@ func _ready() -> void:
 	print("  - StateMachine")
 	print("  - GameUtils")
 
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		# Test EventBus communication
 		EventBus.emit("test_event", {"message": "EventBus is working!"})
+
 
 func _on_test_event(data: Dictionary) -> void:
 	print("EventBus test: ", data.message)

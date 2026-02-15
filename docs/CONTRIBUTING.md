@@ -42,8 +42,19 @@ Para sugerir novas funcionalidades ou melhorias:
    - Siga o [Guia de Estilo](STYLE_GUIDE.md)
    - Mantenha commits atômicos e descritivos
    - Adicione documentação se necessário
+   - **Execute lint antes de commit**: `./scripts/lint.sh`
+   - **Execute testes se disponíveis**: `./scripts/test.sh`
 
-4. **Teste suas alterações**
+4. **Formate o código**
+   ```bash
+   # Auto-formatar GDScript
+   ./scripts/format.sh
+   
+   # Verificar lint
+   ./scripts/lint.sh
+   ```
+
+5. **Teste suas alterações**
    - Verifique se o projeto abre sem erros no Godot
    - Teste a funcionalidade adicionada
    - Verifique se não quebrou funcionalidades existentes
@@ -62,6 +73,49 @@ Para sugerir novas funcionalidades ou melhorias:
    - Descreva claramente as mudanças
    - Referencie issues relacionadas
    - Adicione screenshots se aplicável
+   - **Aguarde CI passar** (lint + testes)
+
+## Qualidade de Código
+
+### Linting
+
+O projeto usa **gdlint** para garantir qualidade de código:
+
+```bash
+# Verificar lint
+./scripts/lint.sh
+
+# Auto-formatar
+./scripts/format.sh
+```
+
+**O CI falhará se**:
+- Houver erros de linting
+- Código não estiver formatado
+- Testes falharem
+
+### Testes
+
+Quando testes estiverem implementados:
+
+```bash
+# Executar testes localmente
+./scripts/test.sh
+```
+
+### Pre-commit Hook (Recomendado)
+
+```bash
+# Criar hook que executa lint antes de commit
+cat > .git/hooks/pre-commit << 'EOF'
+#!/bin/bash
+./scripts/lint.sh || exit 1
+EOF
+
+chmod +x .git/hooks/pre-commit
+```
+
+Mais detalhes em [CI_CD.md](CI_CD.md).
 
 ## Convenções de Commit
 

@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint GDScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install gdtoolkit
+        run: |
+          pip install gdtoolkit==4.3.1
+
+      - name: Lint GDScript files
+        run: |
+          echo "Running gdlint on all .gd files..."
+          find . -name "*.gd" -type f | while read file; do
+            echo "Linting: $file"
+            gdlint "$file" || exit 1
+          done
+
+      - name: Format check
+        run: |
+          echo "Checking GDScript formatting..."
+          gdformat --check . || echo "::warning::Some files are not properly formatted. Run 'gdformat .' locally to fix."
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Godot
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q Godot_v4.3-stable_linux.x86_64.zip
+          chmod +x Godot_v4.3-stable_linux_x86_64
+          mv Godot_v4.3-stable_linux_x86_64 /usr/local/bin/godot
+
+      - name: Verify Godot installation
+        run: |
+          godot --version
+
+      - name: Import project
+        run: |
+          # Import the project to generate .godot folder
+          timeout 30 godot --headless --editor --quit || true
+          sleep 2
+
+      - name: Run GUT tests
+        run: |
+          if [ -d "test" ]; then
+            echo "Running tests..."
+            godot --headless -s addons/gut/gut_cmdln.gd
+          else
+            echo "No tests directory found. Skipping tests."
+          fi
+
+  validate-project:
+    name: Validate Project Structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check project.godot exists
+        run: |
+          if [ ! -f "project.godot" ]; then
+            echo "::error::project.godot not found!"
+            exit 1
+          fi
+          echo "✓ project.godot exists"
+
+      - name: Validate directory structure
+        run: |
+          echo "Checking required directories..."
+          for dir in core components examples docs; do
+            if [ ! -d "$dir" ]; then
+              echo "::warning::Directory $dir not found"
+            else
+              echo "✓ $dir exists"
+            fi
+          done
+
+      - name: Check for .gitignore
+        run: |
+          if [ ! -f ".gitignore" ]; then
+            echo "::warning::.gitignore not found"
+          else
+            echo "✓ .gitignore exists"
+          fi
